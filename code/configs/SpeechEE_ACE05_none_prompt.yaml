@@ -1,0 +1,46 @@
+seed_everything: 3407
+trainer:
+  logger:
+    class_path: pytorch_lightning.loggers.TensorBoardLogger
+    init_args:
+      save_dir: "./logs"
+      name: "xxx"
+  enable_checkpointing: true
+  callbacks:
+    class_path: pytorch_lightning.callbacks.EarlyStopping
+    init_args:
+      monitor: "val_loss"
+      min_delta: 0.00
+      patience: 3
+      verbose: False
+      mode: "min"
+  max_epochs: 30
+  devices: 1
+  accelerator: "gpu"
+  accumulate_grad_batches: 1
+  precision: 16
+ckpt_path: "./xxx.ckpt"
+model:
+  class_path: __main__.WhisperModel
+  init_args:
+    model_name: "openai/whisper-medium"
+    learning_rate: 1e-5
+    batch_size: 16
+    max_output_length: 256
+    freeze_encoder: True
+    model_output_name: "xxx"
+    train_epoch: 30
+    train_dataset_length: 6272
+    new_tokens: ['<event>', '<trigger>', '<type>']
+    decoding_format: "flat"
+data:
+  class_path: __main__.DataModuleForWhisper
+  init_args:
+    model_name: "openai/whisper-medium"
+    data_dir: "xxx"
+    audio_dir: "xxx"
+    num_worker: 4
+    batch_size: 16
+    max_output_length: 256
+    new_tokens: ['<event>', '<trigger>', '<type>']
+    decoding_format: "flat"
